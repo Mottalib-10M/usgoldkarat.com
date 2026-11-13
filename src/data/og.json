@@ -1,0 +1,13 @@
+{
+ "accent": "#9C6400",
+ "symbol": "14K",
+ "variants": [
+  {
+   "file": "og-en.png",
+   "title": "Gold price per gram USA\nby karat, with the time",
+   "subtitle": "10K · 14K · 18K · 24K · pennyweight · silver · offer checker",
+   "badge": "FTC fineness rules · live ounce price in dollars",
+   "brand": "US Gold Karat"
+  }
+ ]
+}

@@ -1,0 +1,46 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { LAST_UPDATED } from '../../data/site-config';
+import { route } from '../../i18n/routes';
+import { breadcrumbSchema, articleSchema } from '../../lib/seo';
+import { displayDate, formatDecimal } from '../../lib/format';
+import { P, SNAPSHOT, STATES, type SourceKey } from '../../lib/engine/params';
+import { OZ, DWT, OZ_AV } from '../../lib/engine/metal';
+import { stamp } from '../../lib/money';
+const lang = 'en';
+const L = (k: SourceKey, t?: string) => `<a href="${P.sources[k].url}" target="_blank" rel="nofollow noopener">${t ?? P.sources[k].label.en}</a>`;
+---
+<PageLayout title="Gold melt value method: spot price, karats, coins and tax" description="How US Gold Karat works out melt values: the gold-api.com spot price and its time, FTC karat fractions, NIST units, US coin contents, IRS rules, state laws." lang={lang} jsonLd={[articleSchema({ title: 'How US Gold Karat works out its values', description: 'Method of US Gold Karat', path: route('method', lang), lang }), breadcrumbSchema([{ name: 'Home', path: route('home', lang) }, { name: 'Method', path: route('method', lang) }])]} breadcrumbs={[{ label: 'Method' }]}>
+  <header class="mb-6"><h1 class="text-3xl font-bold text-navy-900 md:text-4xl">How US Gold Karat works out its values</h1></header>
+  <div class="prose prose-slate max-w-none">
+    <p>Every calculator on US Gold Karat calls one engine of pure functions, fed by a parameter file of legal standards, coin contents and tax rules, and by the spot price. No amount is typed into a page. The parameter file was checked against its sources on {displayDate(P.retrieved_at, 'en-US')}; it is updated by hand when a law or a rule changes, and nothing updates it automatically.</p>
+    <h2>1. The spot price</h2>
+    <p>The price of a troy ounce of gold and silver in US dollars comes from gold-api.com. Its terms, read on {displayDate(P.retrieved_at, 'en-US')}, allow commercial use on websites (section 9), forbid several requests per second (section 4) and give no guarantee of accuracy (section 5). We use it as follows:</p>
+    <ul>
+      <li>when the site is built, one request per metal, spaced more than a second apart, is saved with its time; the text of each page and the first display of each calculator use that price and say when it was recorded (current file: gold <span set:html={stamp(SNAPSHOT.at.XAU)} />);</li>
+      <li>when you open a page, your browser asks gold-api.com for the price of each metal shown on it, one request at a time at least 1.2 seconds apart; the calculator shows the time of that price, and the amounts in the text and tables are worked out again at that same price;</li>
+      <li>if the request fails, the calculator keeps the build price and says so, with its date and time;</li>
+      <li>nothing refreshes by itself; the “Check for a newer price” button asks again, at most once every 15 seconds.</li>
+    </ul>
+    <p>Times are shown in Eastern time. No input you type is sent with these requests.</p>
+    <h2>2. Melt value</h2>
+    <p>Value = weight in grams × fineness ÷ 1,000 × spot price per troy ounce ÷ {formatDecimal(OZ, 7)}. Per <Fragment set:html={L('nistB9', 'NIST SP 811, appendix B.9')} />, the grain is 64.79891 mg; the troy ounce is 480 grains ({formatDecimal(OZ, 4)} g), the pennyweight 24 grains ({formatDecimal(DWT, 4)} g) and the avoirdupois ounce {formatDecimal(OZ_AV, 4)} g.</p>
+    <h2>3. Karat fineness</h2>
+    <p>Under <Fragment set:html={L('ftc233')} />, karat is the share of gold in twenty-fourths, so fineness = k ÷ 24 × 1,000: 10K = 416.7, 14K = 583.3, 18K = 750, 22K = 916.7. 24K is valued at 999. The European stamps 417, 585, 750 and 916 are shown for reference; a 585 piece is valued at 583.3 unless you choose otherwise. The legal floor shown beside a result applies the tolerances of <Fragment set:html={L('usc295')} /> (3 and 7 parts per thousand for gold) and <Fragment set:html={L('usc296')} /> (4 and 10 for silver).</p>
+    <h2>4. Filled and plated gold</h2>
+    <p>Gold filled: at least 1/20 of the weight in gold of at least 10K; rolled gold plate: as little as 1/40; electroplate: 0.175 micron of fine gold; heavy electroplate and vermeil: 2.5 microns (<Fragment set:html={L('ftc233', '16 CFR 23.3')} />, <Fragment set:html={L('ftc234', '23.4')} />). The calculator shows the minimum gold the stamp implies, not a measured content.</p>
+    <h2>5. Coins</h2>
+    <p>Gold Eagles, the Buffalo and the Silver Eagle use the weights and fine contents fixed in <Fragment set:html={L('usc5112')} />. Pre-1933 gold coins and foreign coins are not covered.</p>
+    <h2>6. Offers and premiums</h2>
+    <p>Share of melt = offer ÷ melt value. Premium = price ÷ melt value − 1. The 60% to 90% lines in the scrap calculator are reference points to read quotes against, not market rates: no official body publishes one.</p>
+    <h2>7. Federal income tax</h2>
+    <p>Gold and silver are collectibles (<Fragment set:html={L('usc408m')} />). A long-term gain (held more than {P.tax.longTermMonths} months) is taxed at the lower of your ordinary rate and {Math.round(P.tax.collectiblesMaxRate * 100)}% (<Fragment set:html={L('usc1h')} />, <Fragment set:html={L('irsTc409')} />); a short-term gain at your ordinary rate. Inherited gold takes the fair market value at the date of death as its basis (<Fragment set:html={L('usc1014')} />). You choose your bracket; the calculator does not compute brackets, the net investment income tax, state income tax or loss limits.</p>
+    <h2>8. Dealer reporting</h2>
+    <p>Form 1099-B for precious metals follows the <Fragment set:html={L('irs1099b')} />; Form 8300 follows the <Fragment set:html={L('irs8300')} /> page. The tool answers from your three answers; it does not know your dealer’s practice.</p>
+    <h2>9. State sales tax on bullion</h2>
+    <p>{STATES.length} states are covered: {STATES.map((s) => s.name).join(', ')}. Each statute was read on its official site on {displayDate(LAST_UPDATED, 'en-US')} and is linked from its page. Virginia and Washington were read but left out, because their rules changed in 2025 and 2026 and the new texts were not confirmed. No tax rates are shown.</p>
+    <h2>10. What is left out</h2>
+    <p>Buyers’ and dealers’ prices; numismatic and antique value; stones and non-metal parts (you subtract them from the weight); historical prices; personal tax circumstances. Values are estimates of metal content, not offers or appraisals.</p>
+    <p class="text-sm text-navy-600">Method last reviewed on <time datetime={LAST_UPDATED}>{displayDate(LAST_UPDATED, 'en-US')}</time>.</p>
+  </div>
+</PageLayout>

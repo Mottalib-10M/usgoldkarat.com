@@ -1,0 +1,21 @@
+{
+ "name": "US Gold Karat",
+ "short_name": "US Gold Karat",
+ "description": "Gold price per gram in US dollars by karat, timed: 10K, 14K, 18K, 24K, pennyweight and troy ounce, silver, what a buyer really pays, and state sales-tax rules.",
+ "start_url": "/en/",
+ "display": "standalone",
+ "background_color": "#ffffff",
+ "theme_color": "#9C6400",
+ "icons": [
+  {
+   "src": "/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  }
+ ]
+}

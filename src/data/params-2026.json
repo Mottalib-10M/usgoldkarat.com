@@ -1,0 +1,82 @@
+{
+  "_lisezmoi": "Tous les paramètres du site (RECETTE §4). Chaque valeur a été relue le 2026-11-13 sur la source citée dans `source` (texte officiel lu par curl : ecfr.gov, govinfo.gov, irs.gov, nist.gov). Le cours des métaux n'est PAS ici : il vient de spot-snapshot.json (relevé du build) puis de gold-api.com dans le navigateur. Les règles de taxe de vente par État sont dans states-sales-tax.json.",
+  "year": 2026,
+  "taxYear": "2026",
+  "retrieved_at": "2026-11-13",
+  "valid_from": "2026-01-01",
+  "valid_to": "2026-12-31",
+  "units": {
+    "grainGrams": 0.06479891,
+    "troyOunceGrains": 480,
+    "pennyweightGrains": 24,
+    "avoirdupoisOunceGrams": 28.349523125,
+    "source": "nistB9",
+    "_note": "NIST SP 811, annexe B.9 (masse) : grain = 6,479891 E-05 kg exactement ; once troy = 3,110348 E-02 kg ; pennyweight (dwt) = 1,555174 g ; once avoirdupois = 2,834952 E+01 g. L'once troy fait 480 grains (31,1034768 g) et le pennyweight 24 grains (1,55517384 g) : les valeurs exactes se déduisent du grain, que NIST définit exactement."
+  },
+  "gold": [
+    { "k": 10, "fineness": 416.7, "stamp": "417", "common": true },
+    { "k": 12, "fineness": 500, "stamp": "500", "common": false },
+    { "k": 14, "fineness": 583.3, "stamp": "585", "common": true },
+    { "k": 18, "fineness": 750, "stamp": "750", "common": true },
+    { "k": 22, "fineness": 916.7, "stamp": "916", "common": true },
+    { "k": 24, "fineness": 999, "stamp": "999", "common": true }
+  ],
+  "_gold_note": "16 CFR 23.3 (FTC Guides for the Jewelry Industry) : le karat désigne la part d'or en vingt-quatrièmes, 24 karat = or fin ; la description doit porter le karat (« 14 Karat Gold », « 14K »). La teneur d'un karat est donc k/24 : 10K = 416,7 ‰, 14K = 583,3 ‰, 18K = 750 ‰, 22K = 916,7 ‰. Le poinçon « 585 » vu sur des bijoux importés est la norme européenne du 14 carats (585 ‰), légèrement au-dessus des 583,3 ‰ américains : le site compte 583,3 pour un bijou marqué 14K et le dit. 24K est compté à 999 ‰ (poinçon « 999 ») ; un lingot ou une pièce .9999 se saisit à 999,9.",
+  "tolerance": {
+    "goldNoSolder": 3, "goldWithSolder": 7, "goldWatchcaseFlatware": 3,
+    "silverNoSolder": 4, "silverWithSolder": 10,
+    "sterlingMin": 925, "coinSilverMin": 900,
+    "source": "usc295",
+    "_note": "15 U.S.C. 295 (National Gold and Silver Stamping Act) : la teneur réelle d'un article en or ne peut être inférieure de plus de 3 ‰ à la teneur marquée (partie sans soudure) ; article entier soudure comprise : 3 ‰ pour un boîtier de montre ou des couverts, 7 ‰ pour tout autre article. 15 U.S.C. 296 : argent, 4 ‰ (et 10 ‰ soudure comprise) ; « sterling » ≥ 925 ‰, « coin » ≥ 900 ‰. 16 CFR 23.3(d) et 23.5(c) renvoient à ces tolérances."
+  },
+  "plating": {
+    "goldFilledMinWeightShare": 0.05, "rolledGoldPlateMinWeightShare": 0.025, "plateMinKarat": 10,
+    "electroplateMinMicrons": 0.175, "heavyElectroplateMinMicrons": 2.5, "vermeilMinMicrons": 2.5,
+    "source": "ftc233",
+    "_note": "16 CFR 23.3(c)(2) : « Gold Filled » si le placage d'alliage d'au moins 10 karats fait au moins 1/20 du poids de métal de l'article ; « Rolled Gold Plate » / « Gold Overlay » à partir de 1/40 ; (c)(3) : « Gold Electroplate » dès 0,175 micron d'or fin équivalent, « Heavy Gold Electroplate » dès 2,5 microns. 16 CFR 23.4 : « vermeil » = base en argent sterling, dorure ≥ 10 K d'au moins 2,5 microns."
+  },
+  "silver": [999, 925, 900, 800],
+  "_silver_note": "16 CFR 23.5(b)(2)-(3) : « sterling » = au moins 925/1000 d'argent pur ; « coin » ou « coin silver » = au moins 900/1000. 999 = argent fin (lingots, American Silver Eagle à .999 par 31 U.S.C. 5112(e)). 800 : titre courant des couverts européens, saisi tel quel.",
+  "coins": [
+    { "id": "eagle-1oz", "name": "American Gold Eagle, 1 oz ($50)", "grossG": 33.931, "fineOz": 1, "metal": "XAU", "source": "usc5112" },
+    { "id": "eagle-half", "name": "American Gold Eagle, ½ oz ($25)", "grossG": 16.966, "fineOz": 0.5, "metal": "XAU", "source": "usc5112" },
+    { "id": "eagle-quarter", "name": "American Gold Eagle, ¼ oz ($10)", "grossG": 8.483, "fineOz": 0.25, "metal": "XAU", "source": "usc5112" },
+    { "id": "eagle-tenth", "name": "American Gold Eagle, 1/10 oz ($5)", "grossG": 3.393, "fineOz": 0.1, "metal": "XAU", "source": "usc5112" },
+    { "id": "buffalo-1oz", "name": "American Gold Buffalo, 1 oz ($50)", "fineOz": 0.9999, "metal": "XAU", "source": "usc5112" },
+    { "id": "silver-eagle", "name": "American Silver Eagle, 1 oz ($1)", "grossG": 31.103, "fineness": 999, "metal": "XAG", "source": "usc5112" }
+  ],
+  "_coins_note": "31 U.S.C. 5112(a)(7)-(10) : pièces d'or de 50 $ (33,931 g, une once troy d'or fin), 25 $ (16,966 g, ½ oz), 10 $ (8,483 g, ¼ oz), 5 $ (3,393 g, 1/10 oz) ; le titre (≈ 916,7 ‰) se déduit : once troy d'or fin ÷ poids brut. 5112(a)(11) : pièce de 50 $ qui pèse une once et contient 99,99 % d'or pur (American Buffalo) : 0,9999 oz d'or fin. 5112(e) : pièce d'argent de 40,6 mm, 31,103 g, argent fin à .999 (American Silver Eagle).",
+  "tax": {
+    "collectiblesMaxRate": 0.28,
+    "ordinaryRates": [0.10, 0.12, 0.22, 0.24, 0.32, 0.35, 0.37],
+    "longTermMonths": 12,
+    "source": "usc1h",
+    "_note": "26 U.S.C. 1(h)(4)-(5) : le « 28-percent rate gain » comprend le « collectibles gain », plus-value sur un objet de collection détenu plus d'un an ; 26 U.S.C. 408(m)(2) range « any metal or gem » et « any stamp or coin » parmi les collectibles (l'exception (m)(3) ne vaut que pour les comptes de retraite). IRS Topic 409 : « Net capital gains from selling collectibles (such as coins or art) are taxed at a maximum 28% rate » ; un contribuable dont le taux ordinaire est plus bas paie ce taux plus bas. Taux ordinaires : 10, 12, 22, 24, 32, 35, 37 % (26 U.S.C. 1(j)(2)) ; les bornes des tranches changent chaque année et ne sont pas écrites ici : le lecteur choisit son taux. Détention d'un an ou moins : plus-value ordinaire, au taux ordinaire."
+  },
+  "reporting": {
+    "form8300CashOver": 10000,
+    "form8300Days": 15,
+    "source": "irs8300",
+    "_note": "IRS, « Form 8300 and reporting cash payments of over $10,000 » : toute personne dans un commerce qui reçoit plus de 10 000 $ en espèces en une transaction ou en transactions liées dépose le formulaire 8300 sous 15 jours. Instructions du formulaire 1099-B, « Sales of precious metals » : une vente d'or, d'argent, de platine ou de palladium n'est déclarable par le négociant que si le métal est sous une forme admise à la livraison d'un contrat à terme réglementé (CFTC) ET en quantité au moins égale au minimum de ce contrat ; les ventes d'un même client sur 24 heures s'additionnent."
+  },
+  "basis": {
+    "source": "usc1014",
+    "_note": "26 U.S.C. 1014(a)(1) : la base d'un bien reçu d'un défunt est sa juste valeur marchande à la date du décès (stepped-up basis) ; la plus-value sur de l'or hérité se mesure depuis cette valeur, pas depuis le prix d'achat du défunt."
+  },
+  "sources": {
+    "goldApi": { "url": "https://gold-api.com/terms", "label": { "en": "gold-api.com: terms of service (effective September 10, 2026), section 9 commercial use" } },
+    "nistB9": { "url": "https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b9", "label": { "en": "NIST Guide to the SI (SP 811), Appendix B.9: grain, troy ounce, pennyweight and avoirdupois ounce in grams" } },
+    "ftc233": { "url": "https://www.ecfr.gov/current/title-16/chapter-I/subchapter-B/part-23/section-23.3", "label": { "en": "16 CFR 23.3 (FTC Guides for the Jewelry Industry): gold content, karat marking, gold filled and plated" } },
+    "ftc234": { "url": "https://www.ecfr.gov/current/title-16/chapter-I/subchapter-B/part-23/section-23.4", "label": { "en": "16 CFR 23.4 (FTC Guides for the Jewelry Industry): the word vermeil" } },
+    "ftc235": { "url": "https://www.ecfr.gov/current/title-16/chapter-I/subchapter-B/part-23/section-23.5", "label": { "en": "16 CFR 23.5 (FTC Guides for the Jewelry Industry): silver content, sterling and coin silver" } },
+    "usc295": { "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title15/html/USCODE-2023-title15-chap8-sec295.htm", "label": { "en": "15 U.S.C. 295 (National Gold and Silver Stamping Act): standard of fineness of gold articles, 3 and 7 parts per thousand" } },
+    "usc296": { "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title15/html/USCODE-2023-title15-chap8-sec296.htm", "label": { "en": "15 U.S.C. 296 (National Gold and Silver Stamping Act): sterling 925, coin silver 900, tolerances" } },
+    "usc5112": { "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title31/html/USCODE-2023-title31-subtitleIV-chap51-subchapII-sec5112.htm", "label": { "en": "31 U.S.C. 5112: denominations, weights and fine metal content of United States coins (Gold Eagle, Buffalo, Silver Eagle)" } },
+    "usc1h": { "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title26/html/USCODE-2023-title26-subtitleA-chap1-subchapA-partI-sec1.htm", "label": { "en": "26 U.S.C. 1(h)(4)-(5): 28-percent rate gain and collectibles gain; 1(j)(2): ordinary income rates" } },
+    "usc408m": { "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title26/html/USCODE-2023-title26-subtitleA-chap1-subchapD-partI-subpartA-sec408.htm", "label": { "en": "26 U.S.C. 408(m)(2): collectible means any metal or gem, any stamp or coin" } },
+    "usc1014": { "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title26/html/USCODE-2023-title26-subtitleA-chap1-subchapO-partII-sec1014.htm", "label": { "en": "26 U.S.C. 1014(a): basis of property acquired from a decedent is its fair market value at the date of death" } },
+    "irsTc409": { "url": "https://www.irs.gov/taxtopics/tc409", "label": { "en": "IRS Tax Topic 409: capital gains and losses, maximum 28% rate on collectibles" } },
+    "irs1099b": { "url": "https://www.irs.gov/instructions/i1099b", "label": { "en": "IRS Instructions for Form 1099-B: Sales of precious metals (CFTC contract form and minimum quantity, 24-hour aggregation)" } },
+    "irs8300": { "url": "https://www.irs.gov/businesses/small-businesses-self-employed/form-8300-and-reporting-cash-payments-of-over-10000", "label": { "en": "IRS: Form 8300 and reporting cash payments of over $10,000" } }
+  }
+}

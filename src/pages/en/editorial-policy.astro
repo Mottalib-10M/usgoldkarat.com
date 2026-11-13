@@ -1,0 +1,29 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { AUTHOR_NAME, CONTACT_EMAIL, LAST_UPDATED, SITE_NAMES } from '../../data/site-config';
+import { displayDate } from '../../lib/format';
+const lang = 'en';
+---
+<PageLayout title={`Editorial policy of ${SITE_NAMES[lang]}: sources, tests, fixes`} description="Which federal laws, FTC guides, IRS pages and state statutes US Gold Karat uses, why it prints no buyer’s prices, how its engine is tested and how an error is corrected." lang={lang} noindex={true} breadcrumbs={[{ label: 'Editorial policy' }]} showAuthor={false}>
+  <div class="prose prose-slate max-w-none">
+    <h1>Editorial and corrections policy</h1>
+    <p>People read these pages just before they hand their gold to a buyer, or when they wonder whether selling an inheritance means a tax bill. A wrong karat fraction, a wrong coin content or an invented “typical buying rate” could cost them money. So every figure on the site is computed from a cited source, never typed into a page.</p>
+    <h2>Who is responsible</h2><p>{AUTHOR_NAME}, reachable at <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+    <h2>The sources we use</h2>
+    <ul>
+      <li>the FTC Guides for the Jewelry Industry, 16 CFR 23.3 to 23.5 (karat, filled, plated, vermeil, sterling);</li>
+      <li>the National Gold and Silver Stamping Act, 15 U.S.C. 295 and 296 (tolerances);</li>
+      <li>NIST SP 811 (grain, pennyweight, troy ounce) and 31 U.S.C. 5112 (US bullion coins);</li>
+      <li>the Internal Revenue Code (sections 1(h), 408(m), 1014) and IRS pages on collectibles, Form 1099-B and Form 8300;</li>
+      <li>each covered state’s own statute on bullion sales tax, linked from its page;</li>
+      <li>gold-api.com for the spot price of gold and silver in dollars.</li>
+    </ul>
+    <h2>What we do not publish</h2>
+    <p>No buyer’s or dealer’s prices, no ranking of named stores, no “average” payout rate. Those are private figures that change daily and that we cannot verify. A state whose statute we have not read is simply not listed.</p>
+    <h2>How the numbers are checked</h2>
+    <p>The engine is a set of pure functions covered by automated tests, including the coin contents set by law and the karat fractions of the FTC guides. The parameter file records the source of every value and the date it was read.</p>
+    <h2>Corrections</h2>
+    <p>When a reader reports an error, we reread the source, correct the parameter or the engine, add a test and change the date at the foot of the page.</p>
+    <p class="text-sm text-navy-600">Last reviewed on <time datetime={LAST_UPDATED}>{displayDate(LAST_UPDATED, 'en-US')}</time>.</p>
+  </div>
+</PageLayout>
