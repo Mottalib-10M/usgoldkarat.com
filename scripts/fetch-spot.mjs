@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Relevé du cours au build (brief BRIEF-LOT-30-2026-11-13, site 1).
+ * Relevé du cours, lancé par `npm run update-data` (tâche planifiée .github/workflows/deploy.yml, en semaine
+ * toutes les trois heures ; il ne tourne plus dans `npm run build`) (brief BRIEF-LOT-30-2026-11-13, site 1).
  * Source : https://api.gold-api.com/price/<XAU|XAG>/USD (gold-api.com, dollars par once troy ; conditions relues
  * le 2026-11-13, version du 10 septembre 2026 : § 9 usage commercial permis, y compris sur un site web tiers ;
  * § 4 jamais plusieurs requêtes par seconde, d'où une requête par métal espacée de 1,5 s ; § 5 aucune garantie).

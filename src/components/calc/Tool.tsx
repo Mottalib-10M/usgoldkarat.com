@@ -10,11 +10,12 @@ import Toggle from '../ui/Toggle';
 import { useSpot } from '../../lib/live';
 import { P, SNAPSHOT, STATES, stateByCode, type Metal } from '../../lib/engine/params';
 import { finenessOfKarat, stampOfKarat, metalValue, gramPrice, dwtPrice, karatTable, toGrams, fromGrams, offerShare, lotValue, coinFineGrams, coinMetalValue, coinById, coinFineness, premium, quoteShare, plateGoldGrams, minimumFineness, collectiblesTax, dealerReports, salesTaxOn, finePerGram, OZ, DWT, UNIT_LABEL, type Unit, type PlateKind } from '../../lib/engine/metal';
-import { usd, usd2, pct, grams, clock } from '../../lib/money';
+import { usd, usd0, usd2, pct, grams, clock } from '../../lib/money';
 import { formatNumber, formatDecimal } from '../../lib/format';
 import { readParams, num, str, updateURL } from '../../lib/url-state';
 import { SpotLine, Row, Frame, Big, Table, KaratSelect, UnitSelect, METAL_NAME, useExample, ExampleNote, fin } from './common';
 import { exampleOffer } from '../../lib/exemple';
+import { PURITY_24K, PURITY_24K_COURT } from '../../lib/purete';
 
 export interface ToolArgs { tool: string; mini?: boolean; title?: string; idp?: string; k?: number; unit?: string; coin?: string; fineness?: number; metal?: string; kind?: string; grams?: number; offer?: number; state?: string; quoteUnit?: string }
 
@@ -22,7 +23,13 @@ const OFFER_PATH = '/en/cash-for-gold-offer-checker/';
 const COMPARE_PATH = '/en/sell-gold-near-me/';
 const NO_FAIR_RATE = 'Is it a good offer? No law or agency publishes what buyers pay, so the only yardstick is a second quote: ask one or two other buyers to price the same pieces today. The highest share wins. 100% would be every cent the gold is worth.';
 const pointsWorth = (value: number) => (value > 0 ? `Each extra 10% a buyer pays is ${usd(value / 10)} more for you.` : '');
-const payRange = (value: number) => `At 60% to 90% of this value, a buyer would pay ${usd(value * 0.6)} to ${usd(value * 0.9)}. Those are two reference points, not a market rate.`;
+/** Les deux bornes au même format (testeurs naïfs du 2026-11-14 : « $687.47 to $1,031 » faisait négligé). */
+const payRange = (value: number) => { const f = value * 0.9 >= 1000 ? usd0 : usd2; return `At 60% to 90% of this value, a buyer would pay ${f(value * 0.6)} to ${f(value * 0.9)}. Those are two reference points, not a market rate.`; };
+/** Où se place une offre par rapport aux deux repères de 60 % et 90 % donnés sur l'accueil (testeurs naïfs du
+ *  2026-11-14 : « Is it a good offer? » restait sans réponse). Pas de chiffre nouveau : les mêmes repères. */
+const verdict = (share: number) => share < 0.6 ? `That is below 60%, the low reference point on this site: ask one or two other buyers before you say yes.`
+  : share < 0.9 ? `That is between the 60% and 90% reference points on this site. Only a second quote shows whether you can get more.`
+  : `That is 90% or more, the high reference point on this site: few buyers pay more than that for scrap gold.`;
 const OFFER_HELP = 'The total for all the pieces. Quoted per gram or per pennyweight? Multiply by the weight. No offer yet? Leave it empty.';
 const OVER_100 = 'More than the gold is worth: check the weight and karat the buyer wrote down, or ask whether it is paying for the piece as jewelry rather than as metal.';
 const timeOf = (s: ReturnType<typeof useSpot>, m: Metal = 'XAU') => clock(s[m].live ? s[m].at : SNAPSHOT.at[m]);
@@ -37,6 +44,7 @@ export default function Tool(a0: ToolArgs) {
   const a = { ...a0, title: a0.title ?? (a0.mini ? MINI_TITLES[a0.tool] : undefined) };
   switch (a.tool) {
     case 'board': return <Board {...a} />;
+    case 'prices': return <Prices />;
     case 'karat': return <KaratTool {...a} />;
     case 'offer': return <Offer {...a} />;
     case 'scrap': return <Scrap {...a} />;
@@ -53,7 +61,28 @@ export default function Tool(a0: ToolArgs) {
   }
 }
 
-/* ---------- Accueil : prix au gramme par karat, valeur d'un poids ---------- */
+/* ---------- Accueil, premier écran : le prix du gramme de chaque karat (la réponse que promet la recherche) ----------
+ * Testeurs naïfs du 2026-11-14 : la liste « 10K (417): 1 g · 1 dwt / $52.08 · $81.00 » était sous le calculateur,
+ * sans en-têtes, et le premier gros chiffre était un exemple (10 g de 14K). Deux colonnes nommées, au-dessus. */
+function Prices() {
+  const spot = useSpot(['XAU']);
+  const oz = spot.XAU.usdPerOz;
+  const rows = karatTable(oz).filter((r) => r.common);
+  return (
+    <section aria-labelledby="prix-du-jour" className="rounded-lg border border-accent-300 bg-white px-3 py-2 sm:px-4" data-chrome>
+      <h2 id="prix-du-jour" className="text-base font-semibold leading-snug text-navy-900">Gold price per gram today, by karat</h2>
+      <table className="mt-1 w-full text-sm">
+        <thead><tr className="text-left text-xs font-medium text-navy-600"><th className="py-0.5 pr-2 font-medium">Karat (stamp)</th><th className="py-0.5 pr-2 text-right font-medium">Per gram</th><th className="py-0.5 text-right font-medium">Per pennyweight{'\u00a0'}(1.555{'\u00a0'}g)</th></tr></thead>
+        <tbody className="divide-y divide-accent-200">
+          {rows.map((r) => <tr key={r.k}><td className="py-0.5 pr-2 font-semibold text-navy-900">{r.k}K <span className="font-normal text-navy-600">({r.stamp})</span></td><td className="tabular-nums py-0.5 pr-2 text-right text-base font-bold text-navy-900">{usd2(r.gram)}</td><td className="tabular-nums py-0.5 text-right text-navy-800">{usd2(r.dwt)}</td></tr>)}
+        </tbody>
+      </table>
+      <p className="mt-1 text-xs text-navy-600">{PURITY_24K_COURT(oz)} {spot.XAU.live ? 'Live price' : 'Price recorded'} at {timeOf(spot)}.</p>
+    </section>
+  );
+}
+
+/* ---------- Accueil : valeur d'un poids ---------- */
 function Board({ mini, title, idp = 'b', k: k0 = 14, grams: g0 = 10 }: ToolArgs) {
   const [k, setK] = useState(k0);
   const [w, setW] = useState(g0);
@@ -73,21 +102,19 @@ function Board({ mini, title, idp = 'b', k: k0 = 14, grams: g0 = 10 }: ToolArgs)
         {example && <ExampleNote>Example: {formatDecimal(w, 3)} {unitShort} of {k}K. Type your own weight.</ExampleNote>}
         <div className="grid grid-cols-2 gap-x-4"><KaratSelect id={`${idp}-k`} value={k} onChange={typed(setK)} /><NumberField id={`${idp}-w`} label="Weight" value={w} onChange={typed(setW)} unit={unitShort} decimals={3} max={100000} /></div>
         <UnitSelect id={`${idp}-u`} value={u} onChange={typed(setU)} units={['g', 'dwt', 'ozt']} label="Weighed in" />
-        <div className="-mt-2"><p className="text-xs text-navy-600">Karat (K): the number stamped inside a ring or on a clasp, such as 14K or 585. No stamp? Choose 10K so the value is not too high. A kitchen scale in grams is fine.</p></div>
+        <div className="-mt-2"><p className="text-xs text-navy-600">Karat (K): the number stamped inside a ring or on a clasp, such as 14K or 585 (585 is the European mark for 14K; the calculator counts 14K as exactly 14/24 gold). No stamp? Choose 10K so the value is not too high. A kitchen scale in grams is fine.</p></div>
       </>}
       result={<>
         <Big label={`${example ? 'Example: ' : ''}${formatDecimal(w, 3)} ${unitShort} of ${k}K gold is worth`} value={usd(value)} sub={<>The gold itself, at the live price of {timeOf(spot)}. A buyer pays less, because it has to melt and refine it.</>} />
         <p className="mt-2 text-sm font-medium text-navy-900">{payRange(value)}</p>
-        <Table caption="Gold price per gram and per pennyweight by karat">
-          {karatTable(oz).map((r) => <Row key={r.k} label={`${r.k}K (${r.stamp}): 1 g · 1 dwt`} value={`${usd2(r.gram)} · ${usd2(r.dwt)}`} strong={r.k === k} />)}
-        </Table>
+        <p className="mt-2 text-sm text-navy-700">1 gram of {k}K is worth <span className="font-semibold text-navy-900">{usd2(gramPrice(finenessOfKarat(k), oz))}</span> right now; the price of each karat is in the table above the calculator.</p>
       </>}
       foot={mini ? undefined : <div className="mt-4 grid gap-3 border-t border-accent-200 pt-4 md:grid-cols-2">
         <div>
           <NumberField id={`${idp}-o`} label="Already have an offer? (optional)" value={offer} onChange={typed(setOffer)} unit="$" decimals={2} max={10000000} help={OFFER_HELP} />
           {offer > 0 && <div aria-live="polite" className="mt-2">
             <p className="text-base font-semibold text-navy-900">Your offer of {usd(offer)} pays {pct(s.share)} of this gold value{s.gap > 0 ? <>; the buyer keeps {usd(s.gap)}</> : null}.</p>
-            <p className={`mt-1 text-sm ${s.share > 1 ? 'text-amber-800' : 'text-navy-700'}`}>{s.share > 1 ? OVER_100 : <>{NO_FAIR_RATE} {pointsWorth(value)}</>}</p>
+            <p className={`mt-1 text-sm ${s.share > 1 ? 'text-amber-800' : 'text-navy-700'}`}>{s.share > 1 ? OVER_100 : <>{verdict(s.share)} {pointsWorth(value)}</>}</p>
             <p className="mt-1 text-sm"><a href={`${OFFER_PATH}?k=${k}&g=${formatDecimal(toGrams(w, u), 3)}&o=${offer}`} className="font-medium text-accent-700 underline hover:text-navy-900">What to check before you say yes →</a></p>
           </div>}
         </div>
@@ -112,10 +139,10 @@ function KaratTool({ mini, title, idp = 'c', k = 14, grams: g0 = 10 }: ToolArgs)
   return (
     <Frame mini={mini} title={title} spotLine={<SpotLine spot={spot} metals={['XAU']} />}
       fields={<>
-        {example && <ExampleNote>Example: {formatDecimal(w, 3)} {unitShort}. Type the weight of your own {k}K piece.</ExampleNote>}
+        {example && <ExampleNote>Example: {formatDecimal(w, 3)} {unitShort}{u === 'g' && Math.abs(w - OZ) < 0.001 ? ', one troy ounce, the weight of a 1 ounce bar or coin' : ''}. Type the weight of your own {k}K piece.</ExampleNote>}
         <div className="grid grid-cols-2 gap-x-4"><NumberField id={`${idp}-w`} label={`Weight of your ${k}K gold`} value={w} onChange={typed(setW)} unit={unitShort} decimals={3} max={100000} />
           <UnitSelect id={`${idp}-u`} value={u} onChange={typed(setU)} units={['g', 'dwt', 'ozt']} label="Weighed in" /></div>
-        <p className="-mt-2 text-xs text-navy-600">Stones, clasps and springs weigh more than the gold inside them, so the value is a ceiling.</p>
+        <p className="-mt-2 text-xs text-navy-600">Stones, clasps and springs add weight but no gold, so the real value of the piece is a little lower.</p>
       </>}
       result={<>
         <Big label={`${example ? 'Example: ' : ''}${formatDecimal(w, 3)} ${unitShort} of ${k}K gold is worth`} value={usd(value)} sub={<>The gold itself, at the live price of {timeOf(spot)}. A buyer pays less.</>} />
@@ -124,8 +151,9 @@ function KaratTool({ mini, title, idp = 'c', k = 14, grams: g0 = 10 }: ToolArgs)
           <Row label="Pure gold inside" value={grams(g * f / 1000, 3)} />
           <Row label={`1 gram of ${k}K`} value={usd2(gramPrice(f, oz))} />
           <Row label={`1 pennyweight of ${k}K`} value={usd2(dwtPrice(f, oz))} />
-          <Row label={`Lowest legal gold content of a ${k}K piece with solder`} value={`${fin(minimumFineness(k, true))} parts in 1,000`} />
+          {k === 24 && <Row label="1 gram of 100% pure gold (spot price)" value={usd2(finePerGram(oz))} />}
         </Table>
+        {k === 24 && <p className="mt-2 text-sm text-navy-700">{PURITY_24K(oz)}</p>}
       </>} />
   );
 }
@@ -152,7 +180,7 @@ function Offer({ mini, title, idp = 'o', k: k0 = 14, grams: g0 = 10, offer: give
       </>}
       result={<>
         <Big label={example ? 'Example: this offer pays' : 'This offer pays'} value={pct(s.share)} sub={<>of the {usd(value)} the gold is worth in {formatDecimal(g, 3)} g of {k}K, at the live price of {timeOf(spot)}</>} />
-        <p className={`mt-2 text-sm font-medium ${s.share > 1 ? 'text-amber-800' : 'text-navy-900'}`}>{s.share > 1 ? OVER_100 : <>{NO_FAIR_RATE} {pointsWorth(value)}</>}</p>
+        <p className={`mt-2 text-sm font-medium ${s.share > 1 ? 'text-amber-800' : 'text-navy-900'}`}>{s.share > 1 ? OVER_100 : <>{verdict(s.share)} {pointsWorth(value)}</>}</p>
         <p className="mt-1 text-sm"><a href={`${COMPARE_PATH}?k=${k}&g=${g}${example ? '' : `&x=${offer}`}`} className="font-medium text-accent-700 underline hover:text-navy-900">Got two or three quotes? Compare them side by side →</a></p>
         <Table caption="Offer compared with the melt value">
           <Row label="Melt value of the gold" value={usd(value)} bar={scale > 0 ? value / scale : 0} />

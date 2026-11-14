@@ -27,11 +27,18 @@ const sources = ['goldApi', 'ftc233', 'ftc235', 'usc295', 'nistB9', 'usc5112', '
 const cats = navCategories(lang, false);
 ---
 <PageLayout title={x.title} description={x.description} lang={lang} jsonLd={jsonLd} faqs={x.faqs} sources={sources}>
+  {/* Premier écran (testeurs naïfs du 2026-11-14) : le prix du gramme de chaque karat d'abord, au-dessus du
+       calculateur ; sur ordinateur à droite du titre, pour que le calculateur reste dans le premier écran. */}
+  <div class="grid gap-x-6 md:grid-cols-[minmax(0,1fr)_26rem]">
+  <div>
   <h1 class="mb-1 text-[1.6rem] font-bold leading-tight text-navy-900 sm:text-3xl">{x.h1}</h1>
   <p class="mb-3 text-navy-700">{x.lead}</p>
-  <nav aria-label="Start from your situation" class="mb-3 grid grid-cols-2 gap-2 text-sm font-medium" data-chrome>
-    {[[route('offer', lang), 'I have an offer to check'], [route('scrap', lang), 'Several pieces, mixed karats'], [route('inherited', lang), 'I inherited some gold'], [route('eagle', lang), 'Gold coins (Eagles)']].map(([h, l]) => <a href={h} class="flex min-h-[44px] items-center rounded-lg border border-accent-300 bg-accent-50 px-3 py-1.5 leading-snug text-navy-900 hover:border-accent-500">{l} →</a>)}
+  </div>
+  <div class="mb-3 md:row-span-2"><Tool client:load tool="prices" /></div>
+  <nav aria-label="Start from your situation" class="mb-3 grid grid-cols-2 gap-2 self-start text-sm font-medium lg:grid-cols-4" data-chrome>
+    {[[route('offer', lang), 'Check an offer'], [route('scrap', lang), 'Mixed karats'], [route('inherited', lang), 'Inherited gold'], [route('eagle', lang), 'Gold coins']].map(([h, l]) => <a href={h} class="flex min-h-[40px] items-center rounded-lg border border-accent-300 bg-accent-50 px-3 py-1 leading-snug text-navy-900 hover:border-accent-500">{l} →</a>)}
   </nav>
+  </div>
   <div class="mb-8"><Tool client:load tool="board" idp="b" k={14} grams={10} /></div>
   <Clamp text={x.resume} lang={lang} id="clamp-home" label={ui.readMore} class="mb-8" />
   <div class="prose prose-slate max-w-none">

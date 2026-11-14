@@ -89,3 +89,32 @@ describe('taxe de vente des États', () => {
   });
   it('Missouri : exonéré à tout montant', () => { expect(salesTaxOn(stateByCode('MO')!, 50).taxable).toBe(false); });
 });
+
+/* Testeurs naïfs du 2026-11-14 : « $124.99 a gram of pure gold » (ligne du cours) et « 24K (999) $124.86 »
+ * (tableau) se contredisaient en apparence. Cause : 24K est compté à 999 ‰, le cours est celui de l'or à 100 %.
+ * Les deux chiffres doivent rester dans ce rapport exact, et la phrase affichée doit porter les deux. */
+import { finePerGram, karatTable, gramPrice } from '../src/lib/engine/metal';
+import { PURITY_24K, gram24K } from '../src/lib/purete';
+import { usd2 } from '../src/lib/money';
+describe('cohérence 24K / or pur', () => {
+  for (const oz of [3887.6, 2000, 5123.45]) {
+    it(`cours ${oz} $/oz`, () => {
+      const row = karatTable(oz).find((r) => r.k === 24)!;
+      expect(row.gram).toBeCloseTo(finePerGram(oz) * 0.999, 9);
+      expect(row.gram).toBe(gram24K(oz));
+      expect(row.gram).toBeLessThan(finePerGram(oz));
+      const phrase = PURITY_24K(oz);
+      expect(phrase).toContain(usd2(row.gram));
+      expect(phrase).toContain(usd2(finePerGram(oz)));
+      // chaque karat du tableau d'accueil = cours du gramme pur × titre
+      for (const r of karatTable(oz)) expect(r.gram).toBeCloseTo(finePerGram(oz) * r.fineness / 1000, 9);
+      expect(gramPrice(1000, oz)).toBeCloseTo(finePerGram(oz), 9);
+    });
+  }
+});
+import { PURITY_24K_COURT } from '../src/lib/purete';
+describe('cohérence 24K / or pur, phrase courte du premier écran', () => {
+  it('porte le prix du gramme pur affiché par la ligne du cours', () => {
+    expect(PURITY_24K_COURT(3887.6)).toContain(usd2(finePerGram(3887.6)));
+  });
+});

@@ -1,17 +1,21 @@
-name: deploy
+name: Gold spot update and deploy
 
-# Publie le site sur GitHub Pages à chaque push sur main, et après chaque passe de update-data
-# (un push fait avec GITHUB_TOKEN ne relance pas les workflows, d'où workflow_run).
+# Cours de l'or et de l'argent (gold-api.com, dollars par once) relus en semaine toutes les trois heures,
+# de 7 h à 22 h UTC (ouverture de Londres à clôture de New York ; le marché est fermé le week-end) :
+# scripts/fetch-spot.mjs réécrit src/data/spot-snapshot.json (premier rendu et repli daté de la page),
+# puis le site est reconstruit et publié. Le navigateur relit ensuite le cours lui-même (src/lib/live.ts).
+# En cas d'échec de l'API, le script garde le dernier relevé et sa date : la publication n'est pas bloquée.
+# Ce workflow est le seul qui publie le site : push sur main, tâche planifiée et lancement manuel.
+# Modèle : canadaprocessingtimes.com/.github/workflows/update-data.yml (RECETTE, sites à données datées).
 on:
+  schedule:
+    - cron: "17 7,10,13,16,19,22 * * 1-5"
   push:
     branches: [main]
-  workflow_run:
-    workflows: [update-data]
-    types: [completed]
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -21,18 +25,45 @@ concurrency:
 
 jobs:
   build:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - run: npm ci --legacy-peer-deps
-      - run: npm run build
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Read the spot price (scheduled and manual runs)
+        if: github.event_name != 'push'
+        run: npm run update-data
+
+      - name: Tests
+        run: npx vitest run
+
+      - name: Build
+        run: npm run build
+
+      - name: Commit the new readings
+        id: commit
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/spot-snapshot.json
+          if git diff --cached --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; else
+            git commit -m "Gold spot read on $(date -u +'%F %H:%M') UTC" && git push && echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
@@ -47,7 +78,9 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v4
       - name: Checkout (script IndexNow)
+        if: github.event_name != 'schedule'
         uses: actions/checkout@v4
       - name: Ping IndexNow
+        if: github.event_name != 'schedule'
         continue-on-error: true
         run: bash scripts/indexnow.sh https://usgoldkarat.com

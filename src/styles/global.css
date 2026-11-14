@@ -120,3 +120,17 @@ p[id$="-help"]:not([role="status"]), [data-fixe], [data-actuellement], [aria-liv
   [aria-live] table tr:has(> td + td) { border-top: 1px solid var(--color-navy-200); padding: .3rem 0; }
   [aria-live] table tr > td + td { flex: 1 1 100%; padding-top: .1rem; text-align: left; font-weight: 600; }
 }
+
+/* Sections repliées sous leur titre (lib/replis.ts, sources de PageLayout). Testeurs naïfs du 2026-11-14 : sans
+   règle, le triangle ▶ restait seul sur sa ligne au-dessus d'un gros titre, pris pour un chapitre vide. Cadre et
+   chevron comme les questions de la FAQ, titre à taille de lecture, sur la même ligne que le signe. */
+details.pli { margin: .5rem 0; border: 1px solid var(--color-navy-200); border-radius: .5rem; background: #fff; }
+details.pli > summary { display: flex; align-items: center; justify-content: space-between; gap: .75rem; cursor: pointer; list-style: none; padding: .8rem 1rem; }
+details.pli > summary::-webkit-details-marker { display: none; }
+details.pli > summary::after { content: ''; flex: none; width: .6rem; height: .6rem; border-right: 2px solid var(--color-navy-400); border-bottom: 2px solid var(--color-navy-400); transform: rotate(45deg); margin-top: -.3rem; transition: transform .15s; }
+details.pli[open] > summary::after { transform: rotate(-135deg); margin-top: .2rem; }
+details.pli > summary h2, .prose details.pli > summary h2 { margin: 0; padding: 0; border: 0; font-size: 1.1rem; line-height: 1.35; }
+details.pli > summary:focus-visible { outline: 2px solid var(--color-accent-500); outline-offset: 3px; }
+details.pli > :not(summary) { padding-left: 1rem; padding-right: 1rem; }
+.prose details.pli > :not(summary) { padding-left: 1rem; padding-right: 1rem; }
+.pli-aide { margin-top: 1.5rem; font-size: .9375rem; color: var(--color-navy-700); }

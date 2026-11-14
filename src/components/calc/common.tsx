@@ -25,7 +25,7 @@ export function SpotLine({ spot, metals }: { spot: Spot; metals: Metal[] }) {
         return (
           <p key={m}>
             <span className={`mr-1.5 inline-block h-2 w-2 shrink-0 rounded-full align-middle ${q.live ? 'bg-green-600' : 'bg-navy-400'}`} aria-hidden="true" />
-            <span>{q.live ? `Live ${name} price` : `${METAL_NAME[m]} price recorded`}, {stamp(q.live ? q.at : SNAPSHOT.at[m])}: <span className="tabular-nums font-medium text-navy-900">{usd2(finePerGram(q.usdPerOz))}</span> a gram, <span className="tabular-nums font-medium text-navy-900">{usd2(finePerDwt(q.usdPerOz))}</span> a pennyweight of pure {name}. Your result uses this price.</span>
+            <span>{q.live ? `Live ${name} price` : `${METAL_NAME[m]} price recorded`}, {stamp(q.live ? q.at : SNAPSHOT.at[m])}: <span className="tabular-nums font-medium text-navy-900">{usd2(finePerGram(q.usdPerOz))}</span> a gram, <span className="tabular-nums font-medium text-navy-900">{usd2(finePerDwt(q.usdPerOz))}</span> a pennyweight of 100% pure {name} (the spot price). Your result uses this price.</span>
           </p>
         );
       })}

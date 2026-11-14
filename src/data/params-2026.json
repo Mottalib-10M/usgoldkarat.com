@@ -64,7 +64,7 @@
     "_note": "26 U.S.C. 1014(a)(1) : la base d'un bien reçu d'un défunt est sa juste valeur marchande à la date du décès (stepped-up basis) ; la plus-value sur de l'or hérité se mesure depuis cette valeur, pas depuis le prix d'achat du défunt."
   },
   "sources": {
-    "goldApi": { "url": "https://gold-api.com/terms", "label": { "en": "gold-api.com: terms of service (effective September 10, 2026), section 9 commercial use" } },
+    "goldApi": { "url": "https://gold-api.com/terms", "label": { "en": "gold-api.com: the free service that supplies the live gold and silver price, and its terms of use" } },
     "nistB9": { "url": "https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b9", "label": { "en": "NIST Guide to the SI (SP 811), Appendix B.9: grain, troy ounce, pennyweight and avoirdupois ounce in grams" } },
     "ftc233": { "url": "https://www.ecfr.gov/current/title-16/chapter-I/subchapter-B/part-23/section-23.3", "label": { "en": "16 CFR 23.3 (FTC Guides for the Jewelry Industry): gold content, karat marking, gold filled and plated" } },
     "ftc234": { "url": "https://www.ecfr.gov/current/title-16/chapter-I/subchapter-B/part-23/section-23.4", "label": { "en": "16 CFR 23.4 (FTC Guides for the Jewelry Industry): the word vermeil" } },

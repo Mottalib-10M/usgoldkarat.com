@@ -2,7 +2,7 @@ import { definePage } from '../../lib/page-types';
 export default definePage({
   id: "reports", group: "rules", order: 52, tool: "reports", kind: 'outil',
   related: ["tax", "near", "eagle", "salestax"], sources: ["irs1099b", "irs8300"],
-  slug: "gold-sale-1099-b-and-form-8300", nav: "1099-B and Form 8300", card: "When a gold dealer reports your sale to the IRS, and when it does not",
+  slug: "gold-sale-1099-b-and-form-8300", nav: "Tax forms when you sell (1099-B, 8300)", card: "When a gold dealer reports your sale to the IRS, and when it does not",
   title: "Gold Sale 1099-B and Form 8300: What Dealers Report",
   description: "Does a gold dealer report your sale? The 1099-B rule for precious metals, the 24-hour aggregation, Form 8300 for cash over $10,000, and what you report.",
   h1: "Gold sale reporting: Form 1099-B and Form 8300",
