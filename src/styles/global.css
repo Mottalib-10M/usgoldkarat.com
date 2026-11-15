@@ -134,3 +134,6 @@ details.pli > summary:focus-visible { outline: 2px solid var(--color-accent-500)
 details.pli > :not(summary) { padding-left: 1rem; padding-right: 1rem; }
 .prose details.pli > :not(summary) { padding-left: 1rem; padding-right: 1rem; }
 .pli-aide { margin-top: 1.5rem; font-size: .9375rem; color: var(--color-navy-700); }
+
+/* Champs en subgrid : quand le formulaire est étiré à la hauteur du résultat voisin, ses rangées ne doivent pas s'étirer (trous entre libellé, case et aide). */
+:where(form, div, fieldset):has(> .grid-rows-subgrid) { align-content: start; }
